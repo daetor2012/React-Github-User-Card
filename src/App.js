@@ -1,26 +1,63 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import axios from "axios";
+import CardList from "./CardList";
+import UserCard from './UserCard';
 
-function App() {
+class App extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      axios: [],
+      followers: []
+    }
+  }
+  componentDidMount() {
+    axios
+      .get("https://api.github.com/users/daetor2012")
+      .then(res => {
+        console.log(res);
+        this.setState({
+          ...this.state,
+          axios: [res.data]
+        })
+        })
+          
+        
+      .catch(error => {
+        console.log(error);
+      })
+
+      axios
+        .get("https://api.github.com/users/daetor2012/followers")
+        .then(response => {
+          console.log(response);
+          this.setState({
+            ...this.state,
+            followers: response.data
+          });
+        })
+        .catch(error => {
+          console.log(error);
+        })
+
+  }
+
+  
+  
+  render() {
+    
+    console.log(this.state);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Github User Cards</h1>
+      <UserCard axios={this.state.axios} />
+      <CardList axios={this.state.axios} followers={this.state.followers} />
     </div>
   );
+}
 }
 
 export default App;
